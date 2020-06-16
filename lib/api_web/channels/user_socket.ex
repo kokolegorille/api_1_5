@@ -1,8 +1,19 @@
 defmodule ApiWeb.UserSocket do
   use Phoenix.Socket
+  import ApiWeb.TokenHelpers, only: [verify_token: 1]
+
+  alias ApiWeb.{
+    SystemChannel,
+    LobbyChannel,
+    UserChannel,
+    RoomChannel
+  }
 
   ## Channels
-  # channel "room:*", ApiWeb.RoomChannel
+  channel "system", SystemChannel
+  channel "lobby", LobbyChannel
+  channel "user:*", UserChannel
+  channel "room:*", RoomChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -15,10 +26,21 @@ defmodule ApiWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
+  # @impl true
+  # def connect(_params, socket, _connect_info) do
+  #   {:ok, socket}
+  # end
+
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(%{"token" => token}, socket) do
+    with {:ok, user} <- verify_token(token) do
+      {:ok, assign(socket, :user, user)}
+    else
+      {:error, _reason} -> :error
+    end
   end
+
+  def connect(_params, _socket), do: :error
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
   #

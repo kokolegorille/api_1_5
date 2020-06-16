@@ -14,9 +14,17 @@ defmodule Api.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Api.PubSub},
       # Start the Endpoint (http/https)
-      ApiWeb.Endpoint
+      ApiWeb.Endpoint,
       # Start a worker by calling: Api.Worker.start_link(arg)
       # {Api.Worker, arg}
+
+      ApiWeb.Presence,
+
+      # Rooms registry
+      {Registry, keys: :unique, name: Registry.Rooms},
+
+      # Dynamic supervisor
+      Api.Rooms.RoomSup,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
