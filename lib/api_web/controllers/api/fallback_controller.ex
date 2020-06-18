@@ -2,7 +2,14 @@ defmodule ApiWeb.Api.FallbackController do
   use ApiWeb, :controller
   alias ApiWeb.Api.AuthenticationView
 
-  def call(conn, {:error, :not_found}) do
+  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(AuthenticationView)
+    |> render("error.json", changeset: changeset)
+  end
+
+  def call(conn, {:error, reason}) when reason in [:not_found, :unauthorized] do
     conn
     |> put_status(:not_found)
     |> put_view(AuthenticationView)

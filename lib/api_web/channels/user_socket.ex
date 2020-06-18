@@ -33,9 +33,9 @@ defmodule ApiWeb.UserSocket do
 
   @impl true
   def connect(%{"token" => token}, socket) do
-    with {:ok, user} <- verify_token(token) do
-      {:ok, assign(socket, :user, user)}
-    else
+    case verify_token(token) do
+      {:ok, user} ->
+        {:ok, assign(socket, :user, user)}
       {:error, _reason} -> :error
     end
   end

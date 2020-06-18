@@ -36,7 +36,7 @@ defmodule Api.Rooms.RoomWkr do
 
   @impl GenServer
   def init(record) do
-    Logger.info "#{__MODULE__} is starting with args #{inspect record}"
+    Logger.info("#{__MODULE__} is starting with args #{inspect(record)}")
     {:ok, record}
   end
 
@@ -50,7 +50,7 @@ defmodule Api.Rooms.RoomWkr do
 
   @impl GenServer
   def terminate(reason, _state) do
-    Logger.info "#{__MODULE__} stopped : #{inspect(reason)}"
+    Logger.info("#{__MODULE__} stopped : #{inspect(reason)}")
     :ok
   end
 

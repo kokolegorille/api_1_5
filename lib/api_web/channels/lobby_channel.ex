@@ -13,10 +13,22 @@ defmodule ApiWeb.LobbyChannel do
 
   def handle_info(:after_join, socket) do
     push(socket, "presence_state", Presence.list(socket))
-    {:ok, _} = Presence.track(socket, socket.assigns.user.id, %{
-      name: socket.assigns.user.name,
-      online_at: :os.system_time(:millisecond)
-    })
+
+    {:ok, _} =
+      Presence.track(socket, socket.assigns.user.id, %{
+        name: socket.assigns.user.name,
+        online_at: :os.system_time(:millisecond)
+      })
+
+    {:noreply, socket}
+  end
+
+  def handle_in(command, payload, socket) do
+    message = "#{__MODULE__} > Unknown command '#{command}' " <>
+      "(#{inspect(command, base: :hex)}) " <>
+      "with payload #{inspect(payload)}"
+
+    Logger.debug fn -> message end
     {:noreply, socket}
   end
 

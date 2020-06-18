@@ -10,7 +10,10 @@ defmodule Api.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ],
     ]
   end
 
@@ -46,6 +49,9 @@ defmodule Api.MixProject do
       #
       {:argon2_elixir, "~> 2.1"},
       {:corsica, "~> 1.1"},
+      #
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:credo, "~> 1.1", only: [:dev], runtime: false},
     ]
   end
 

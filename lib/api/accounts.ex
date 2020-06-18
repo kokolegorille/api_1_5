@@ -9,7 +9,7 @@ defmodule Api.Accounts do
   alias Api.Accounts.User
 
   def list_users_query(criteria \\ []) do
-    query = from p in User
+    query = from(p in User)
 
     Enum.reduce(criteria, query, fn
       {:limit, limit}, query ->
@@ -145,7 +145,7 @@ defmodule Api.Accounts do
 
   def authenticate(%{"name" => name, "password" => password}) do
     with %User{} = user <- get_user_by_name(name),
-        {:ok, _} <- check_password(user, password) do
+         {:ok, _} <- check_password(user, password) do
       {:ok, user}
     else
       _ -> {:error, :unauthorized}
@@ -154,6 +154,5 @@ defmodule Api.Accounts do
 
   def authenticate(_), do: {:error, :unauthorized}
 
-  defp check_password(user, password), do:
-    Argon2.check_pass(user, password)
+  defp check_password(user, password), do: Argon2.check_pass(user, password)
 end

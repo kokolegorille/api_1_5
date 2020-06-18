@@ -25,6 +25,7 @@ defmodule Api.Application do
 
       # Dynamic supervisor
       Api.Rooms.RoomSup,
+      ApiWeb.ChannelMonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

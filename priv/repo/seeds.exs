@@ -15,5 +15,5 @@ alias Api.Accounts
 Accounts.create_user(%{
   name: "admin",
   email: "admin@example.local",
-  password: "secret",
-  })
+  password: "secret"
+})

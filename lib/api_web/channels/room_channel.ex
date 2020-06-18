@@ -5,8 +5,17 @@ defmodule ApiWeb.RoomChannel do
   require Logger
   @name __MODULE__
 
+  alias ApiWeb.ChannelMonitor
+
   def join("room:" <> id, _params, socket) do
-    socket = assign(socket, :room_id, String.to_integer(id))
+    room_id = String.to_integer(id)
+    socket = assign(socket, :room_id, room_id)
+
+    ChannelMonitor.monitor_channel(
+      self(),
+      %{room_id: room_id, user_id: socket.assigns.user.id}
+    )
+
     send(self(), :after_join)
     {:ok, socket}
   end

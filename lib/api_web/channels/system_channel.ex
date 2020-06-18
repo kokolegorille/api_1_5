@@ -52,7 +52,7 @@ defmodule ApiWeb.SystemChannel do
   end
 
   def handle_in(command, payload, socket) do
-    log("#{command} #{inspect payload}")
+    log("#{command} #{inspect(payload)}")
     {:noreply, socket}
   end
 

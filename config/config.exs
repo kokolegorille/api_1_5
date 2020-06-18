@@ -10,6 +10,8 @@ use Mix.Config
 config :api,
   ecto_repos: [Api.Repo]
 
+config :api, Api.Repo, migration_timestamps: [type: :utc_datetime]
+
 # Configures the endpoint
 config :api, ApiWeb.Endpoint,
   url: [host: "localhost"],

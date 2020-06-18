@@ -13,13 +13,13 @@ defmodule Api.Rooms do
 
   def list_rooms do
     list_workers()
-    |> Enum.map(& RoomWkr.get_state(&1))
+    |> Enum.map(&RoomWkr.get_state(&1))
   end
 
   # Returns the list of worker pids
   def list_workers do
     RoomSup
     |> DynamicSupervisor.which_children()
-    |> Enum.map(& elem(&1, 1))
+    |> Enum.map(&elem(&1, 1))
   end
 end
