@@ -2,6 +2,7 @@
 
 alias Api.{
   Accounts,
+  Requests,
   Rooms,
   Repo
 }

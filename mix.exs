@@ -49,6 +49,7 @@ defmodule Api.MixProject do
       #
       {:argon2_elixir, "~> 2.1"},
       {:corsica, "~> 1.1"},
+      {:uuid, "~> 1.1"},
       #
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:credo, "~> 1.1", only: [:dev], runtime: false},

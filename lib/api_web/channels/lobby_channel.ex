@@ -5,6 +5,7 @@ defmodule ApiWeb.LobbyChannel do
   require Logger
   @name __MODULE__
   alias ApiWeb.Presence
+  alias Api.Requests
 
   def join("lobby", _params, socket) do
     send(self(), :after_join)
@@ -19,6 +20,16 @@ defmodule ApiWeb.LobbyChannel do
         name: socket.assigns.user.name,
         online_at: :os.system_time(:millisecond)
       })
+
+    {:noreply, socket}
+  end
+
+  def handle_in("create_request", %{"name" => name, "description" => description}, socket) do
+    user = socket.assigns.user
+    request = Requests.new(name, description, user)
+
+    Requests.add_request(request)
+    |> IO.inspect(label: "CREATE REQUEST")
 
     {:noreply, socket}
   end
