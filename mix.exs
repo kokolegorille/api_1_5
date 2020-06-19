@@ -13,7 +13,7 @@ defmodule Api.MixProject do
       deps: deps(),
       dialyzer: [
         plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
-      ],
+      ]
     ]
   end
 
@@ -52,7 +52,7 @@ defmodule Api.MixProject do
       {:uuid, "~> 1.1"},
       #
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:credo, "~> 1.1", only: [:dev], runtime: false},
+      {:credo, "~> 1.1", only: [:dev], runtime: false}
     ]
   end
 

@@ -5,9 +5,11 @@ defmodule ApiWeb.ChannelMonitor do
   """
 
   use GenServer
-  alias ApiWeb.Notifier
   require Logger
   @name __MODULE__
+
+  alias ApiWeb.Notifier
+  alias Api.Requests
 
   def start_link(_args), do: GenServer.start_link(__MODULE__, %{}, name: @name)
 
@@ -32,7 +34,17 @@ defmodule ApiWeb.ChannelMonitor do
     channel_info = Map.get(state, pid)
     Logger.debug(fn -> "DOWN catched! #{inspect(channel_info)} #{inspect(status)}" end)
 
-    notify(%{type: :down, payload: channel_info})
+    case clean_up(channel_info) do
+      {:ok, []} ->
+        nil
+
+      {:ok, ids} ->
+        notify(%{type: :down, payload: Map.put(channel_info, :ids, ids)})
+
+      _ ->
+        nil
+    end
+
     state = Map.delete(state, pid)
     {:noreply, state}
   end
@@ -45,5 +57,16 @@ defmodule ApiWeb.ChannelMonitor do
 
   defp notify(message) do
     Notifier.notify(message)
+  end
+
+  defp clean_up(%{topic: "lobby", user: user}) do
+    Requests.delete_by_owner(user)
+  end
+
+  defp clean_up(%{topic: "room", room_id: _room_id, user_id: _user_id}) do
+  end
+
+  defp clean_up(channel_info) do
+    Logger.debug(fn -> "#{__MODULE__} channel info error : #{inspect(channel_info)}" end)
   end
 end

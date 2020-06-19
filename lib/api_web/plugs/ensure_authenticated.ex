@@ -14,6 +14,7 @@ defmodule ApiWeb.Plugs.EnsureAuthenticated do
     case verify_token(token) do
       {:ok, user} ->
         conn |> assign(:user, user)
+
       {:error, _reason} ->
         conn
         |> put_status(:unauthorized)

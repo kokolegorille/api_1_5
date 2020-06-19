@@ -30,7 +30,7 @@ defmodule Api.Application do
       Api.Requests.RequestSrv,
 
       # Channel monitor
-      ApiWeb.ChannelMonitor,
+      ApiWeb.ChannelMonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

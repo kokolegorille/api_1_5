@@ -5,15 +5,15 @@ defmodule ApiWeb.RoomChannel do
   require Logger
   @name __MODULE__
 
+  alias ApiWeb.Presence
   alias ApiWeb.ChannelMonitor
 
   def join("room:" <> id, _params, socket) do
-    room_id = String.to_integer(id)
-    socket = assign(socket, :room_id, room_id)
+    socket = assign(socket, :room_id, id)
 
     ChannelMonitor.monitor_channel(
       self(),
-      %{room_id: room_id, user_id: socket.assigns.user.id}
+      %{topic: "room", room_id: id, user: socket.assigns.user}
     )
 
     send(self(), :after_join)
@@ -23,6 +23,14 @@ defmodule ApiWeb.RoomChannel do
   def handle_info(:after_join, socket) do
     room_id = socket.assigns.room_id
     log("You have entered #{@name} with id #{room_id}")
+
+    {:ok, _} =
+      Presence.track(socket, socket.assigns.user.id, %{
+        name: socket.assigns.user.name,
+        online_at: :os.system_time(:millisecond)
+      })
+
+    push(socket, "presence_state", Presence.list(socket))
 
     {:noreply, socket}
   end

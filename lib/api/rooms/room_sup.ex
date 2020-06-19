@@ -17,6 +17,13 @@ defmodule Api.Rooms.RoomSup do
     end
   end
 
+  def list_rooms do
+    @name
+    |> DynamicSupervisor.which_children()
+    |> Enum.map(&elem(&1, 1))
+    |> Enum.map(&RoomWkr.get_state(&1))
+  end
+
   def init(_args) do
     opts = [strategy: :one_for_one]
     DynamicSupervisor.init(opts)

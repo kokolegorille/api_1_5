@@ -5,21 +5,14 @@ defmodule Api.Rooms do
 
   alias Api.Rooms.{
     RoomSup,
-    RoomWkr
+    RoomWkr,
+    Room
   }
 
-  defdelegate whereis_name(name), to: RoomWkr
   defdelegate start_worker(args), to: RoomSup
+  defdelegate list_rooms, to: RoomSup
 
-  def list_rooms do
-    list_workers()
-    |> Enum.map(&RoomWkr.get_state(&1))
-  end
+  defdelegate whereis_name(name), to: RoomWkr
 
-  # Returns the list of worker pids
-  def list_workers do
-    RoomSup
-    |> DynamicSupervisor.which_children()
-    |> Enum.map(&elem(&1, 1))
-  end
+  defdelegate new(attrs), to: Room
 end

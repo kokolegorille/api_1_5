@@ -36,7 +36,9 @@ defmodule ApiWeb.UserSocket do
     case verify_token(token) do
       {:ok, user} ->
         {:ok, assign(socket, :user, user)}
-      {:error, _reason} -> :error
+
+      {:error, _reason} ->
+        :error
     end
   end
 
