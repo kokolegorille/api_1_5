@@ -33,7 +33,7 @@ defmodule Api.Application do
       ApiWeb.ChannelMonitor,
 
       # Room monitor
-      Api.Rooms.RoomMonitor,
+      Api.Rooms.RoomMonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

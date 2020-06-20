@@ -10,25 +10,27 @@ defmodule ApiWeb.RoomChannel do
   alias Api.Rooms
 
   def join("room:" <> id, _params, socket) do
-    case Rooms.whereis_name(id) do
-      worker when is_pid(worker) ->
-        socket = assign(socket, :room_id, id)
-        user = socket.assigns.user
+    user = socket.assigns.user
 
-        ChannelMonitor.monitor_channel(
-          self(),
-          %{topic: "room", room_id: id, user: user}
-        )
+    with worker when is_pid(worker) <- Rooms.whereis_name(id),
+         {:ok, _} <- Rooms.join(worker, user) do
+      socket = assign(socket, :room_id, id)
 
-        Rooms.join(worker, user)
+      ChannelMonitor.monitor_channel(
+        self(),
+        %{topic: "room", room_id: id, user: user}
+      )
 
-        send(self(), :after_join)
-        {:ok, socket}
+      send(self(), :after_join)
+      {:ok, socket}
+    else
+      {:error, _} ->
+        {:error, %{reason: "Not authorized"}}
+
       nil ->
         {:error, %{reason: "Worker not available"}}
     end
   end
-
 
   def handle_info(:after_join, socket) do
     room_id = socket.assigns.room_id

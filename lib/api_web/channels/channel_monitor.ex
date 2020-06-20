@@ -41,6 +41,7 @@ defmodule ApiWeb.ChannelMonitor do
         case Requests.delete_by_owner(user) do
           {:ok, keys} ->
             notify(%{type: :requests_deleted, payload: keys})
+
           {:error, _reason} ->
             nil
         end
@@ -48,14 +49,15 @@ defmodule ApiWeb.ChannelMonitor do
       "room" ->
         # There is no need to notify when a user leave a room channel
         channel_info.room_id
-          |> Rooms.whereis_name()
-          |> Rooms.leave(user)
+        |> Rooms.whereis_name()
+        |> Rooms.leave(user)
 
       _ ->
         Logger.debug(fn ->
           "Unknown topic #{topic} #{inspect(channel_info)} #{inspect(status)}"
         end)
     end
+
     state = Map.delete(state, pid)
     {:noreply, state}
   end

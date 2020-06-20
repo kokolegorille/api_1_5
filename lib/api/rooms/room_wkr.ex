@@ -37,12 +37,16 @@ defmodule Api.Rooms.RoomWkr do
   end
 
   def join(nil, _user), do: Logger.info("No worker available")
+
   def join(worker, user)
-    when is_pid(worker), do: GenServer.call(worker, {:join, user})
+      when is_pid(worker),
+      do: GenServer.call(worker, {:join, user})
 
   def leave(nil, _user), do: Logger.info("No worker available")
+
   def leave(worker, user)
-    when is_pid(worker), do: GenServer.call(worker, {:leave, user})
+      when is_pid(worker),
+      do: GenServer.call(worker, {:leave, user})
 
   @impl GenServer
   def init(record) do
@@ -66,6 +70,7 @@ defmodule Api.Rooms.RoomWkr do
     case Room.join(state, user) do
       {:ok, new_state} ->
         {:reply, {:ok, new_state}, new_state}
+
       {:error, _state} ->
         {:reply, {:error, "Join room failure #{inspect(state)}"}, state}
     end
@@ -76,8 +81,10 @@ defmodule Api.Rooms.RoomWkr do
     case Room.leave(state, user) do
       {:ok, %{presences: presences} = new_state} when presences == [] ->
         {:stop, :normal, new_state, new_state}
+
       {:ok, new_state} ->
         {:reply, {:ok, new_state}, new_state}
+
       {:error, _state} ->
         {:reply, {:error, "Leave room failure #{inspect(state)}"}, state}
     end
