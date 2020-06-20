@@ -9,7 +9,7 @@ defmodule ApiWeb.ChannelMonitor do
   @name __MODULE__
 
   alias ApiWeb.Notifier
-  alias Api.Requests
+  alias Api.{Requests, Rooms}
 
   def start_link(_args), do: GenServer.start_link(__MODULE__, %{}, name: @name)
 
@@ -34,17 +34,28 @@ defmodule ApiWeb.ChannelMonitor do
     channel_info = Map.get(state, pid)
     Logger.debug(fn -> "DOWN catched! #{inspect(channel_info)} #{inspect(status)}" end)
 
-    case clean_up(channel_info) do
-      {:ok, []} ->
-        nil
+    %{topic: topic, user: user} = channel_info
 
-      {:ok, ids} ->
-        notify(%{type: :down, payload: Map.put(channel_info, :ids, ids)})
+    case topic do
+      "lobby" ->
+        case Requests.delete_by_owner(user) do
+          {:ok, keys} ->
+            notify(%{type: :requests_deleted, payload: keys})
+          {:error, _reason} ->
+            nil
+        end
+
+      "room" ->
+        # There is no need to notify when a user leave a room channel
+        channel_info.room_id
+          |> Rooms.whereis_name()
+          |> Rooms.leave(user)
 
       _ ->
-        nil
+        Logger.debug(fn ->
+          "Unknown topic #{topic} #{inspect(channel_info)} #{inspect(status)}"
+        end)
     end
-
     state = Map.delete(state, pid)
     {:noreply, state}
   end
@@ -57,16 +68,5 @@ defmodule ApiWeb.ChannelMonitor do
 
   defp notify(message) do
     Notifier.notify(message)
-  end
-
-  defp clean_up(%{topic: "lobby", user: user}) do
-    Requests.delete_by_owner(user)
-  end
-
-  defp clean_up(%{topic: "room", room_id: _room_id, user_id: _user_id}) do
-  end
-
-  defp clean_up(channel_info) do
-    Logger.debug(fn -> "#{__MODULE__} channel info error : #{inspect(channel_info)}" end)
   end
 end

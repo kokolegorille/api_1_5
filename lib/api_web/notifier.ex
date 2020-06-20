@@ -7,14 +7,14 @@ defmodule ApiWeb.Notifier do
 
   alias ApiWeb.Endpoint
 
-  # def notify(%{payload: %{topic: "lobby", user: user}, type: :down}) do
-  #   Endpoint.boradcast!("lobby")
-  # end
-
-  def notify(%{payload: %{topic: "lobby", ids: ids}, type: :down}) do
-    Enum.each(ids, fn id ->
+  def notify(%{type: :requests_deleted, payload: keys}) do
+    Enum.each(keys, fn id ->
       Endpoint.broadcast!("lobby", "request_cancelled", %{id: id})
     end)
+  end
+
+  def notify(%{type: :room_left, payload: %{room_state: room_state}}) do
+    Endpoint.broadcast!("lobby", "room_cancelled", %{id: room_state.id})
   end
 
   # Sample message

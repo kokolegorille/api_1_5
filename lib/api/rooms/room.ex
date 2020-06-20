@@ -4,7 +4,7 @@ defmodule Api.Rooms.Room do
   """
 
   @fields ~w(
-    id name description members presence owner status inserted_at
+    id name description members presences owner status inserted_at
   )a
   @enforce_keys @fields
   @derive Jason.Encoder
@@ -12,7 +12,7 @@ defmodule Api.Rooms.Room do
             name: nil,
             description: nil,
             members: [],
-            presence: [],
+            presences: [],
             owner: nil,
             status: :started,
             inserted_at: nil
@@ -27,21 +27,21 @@ defmodule Api.Rooms.Room do
     struct(__MODULE__, attrs)
   end
 
-  def join(%__MODULE__{members: members, presence: presence} = room, user) do
-    if Enum.member?(members, user) && not Enum.member?(presence, user) do
-      new_presence = [user | presence]
-      status = if length(new_presence) >= length(members), do: :running, else: :idle
-      {:ok, %{room | presence: new_presence, status: status}}
+  def join(%__MODULE__{members: members, presences: presences} = room, user) do
+    if Enum.member?(members, user) && not Enum.member?(presences, user) do
+      new_presences = [user | presences]
+      status = if length(new_presences) >= length(members), do: :running, else: :idle
+      {:ok, %{room | presences: new_presences, status: status}}
     else
       {:error, room}
     end
   end
 
-  def leave(%__MODULE__{presence: presence} = room, user) do
-    if Enum.member?(presence, user) do
-      new_presence = Enum.reject(presence, &(&1 == user))
-      status = if Enum.empty?(new_presence), do: :stopped, else: :idle
-      {:ok, %{room | presence: new_presence, status: status}}
+  def leave(%__MODULE__{presences: presences} = room, user) do
+    if Enum.member?(presences, user) do
+      new_presences = Enum.reject(presences, &(&1 == user))
+      status = if Enum.empty?(new_presences), do: :stopped, else: :idle
+      {:ok, %{room | presences: new_presences, status: status}}
     else
       {:error, room}
     end

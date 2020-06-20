@@ -30,7 +30,10 @@ defmodule Api.Application do
       Api.Requests.RequestSrv,
 
       # Channel monitor
-      ApiWeb.ChannelMonitor
+      ApiWeb.ChannelMonitor,
+
+      # Room monitor
+      Api.Rooms.RoomMonitor,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
