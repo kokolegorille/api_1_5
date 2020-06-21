@@ -47,10 +47,20 @@ defmodule ApiWeb.ChannelMonitor do
         end
 
       "room" ->
-        # There is no need to notify when a user leave a room channel
-        channel_info.room_id
-        |> Rooms.whereis_name()
-        |> Rooms.leave(user)
+        case Rooms.whereis_name(channel_info.room_id) do
+          worker when is_pid(worker) ->
+            Rooms.leave(worker, user)
+
+            # The worker might die from the previous call
+            # If the user is the last to quit the room
+            # => check if it's still alive
+            if Process.alive?(worker) do
+              room_state = Rooms.get_state(worker)
+              notify(%{type: :user_left_room, payload: room_state})
+            end
+          nil ->
+            nil
+        end
 
       _ ->
         Logger.debug(fn ->

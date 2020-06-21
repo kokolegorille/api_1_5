@@ -30,7 +30,7 @@ defmodule Api.Rooms.RoomMonitor do
 
   @impl GenServer
   def handle_info({:DOWN, _ref, :process, pid, status}, state) do
-    room_state = Map.get(state, pid)
+    %{room_state: room_state} = Map.get(state, pid)
     Logger.debug(fn -> "DOWN catched! #{inspect(room_state)} #{inspect(status)}" end)
 
     notify(%{type: :room_left, payload: room_state})

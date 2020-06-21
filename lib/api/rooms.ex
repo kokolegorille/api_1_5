@@ -15,6 +15,8 @@ defmodule Api.Rooms do
   defdelegate whereis_name(name), to: RoomWkr
   defdelegate join(worker, user), to: RoomWkr
   defdelegate leave(worker, user), to: RoomWkr
+  defdelegate get_state(worker), to: RoomWkr
+  defdelegate stop(worker), to: RoomWkr
 
   defdelegate new(attrs), to: Room
 end

@@ -30,7 +30,8 @@ defmodule Api.Rooms.Room do
   def join(%__MODULE__{members: members, presences: presences} = room, user) do
     if Enum.member?(members, user) && not Enum.member?(presences, user) do
       new_presences = [user | presences]
-      status = if length(new_presences) >= length(members), do: :running, else: :idle
+      status = if length(new_presences) >= length(members),
+        do: :running, else: :idle
       {:ok, %{room | presences: new_presences, status: status}}
     else
       {:error, room}

@@ -21,7 +21,8 @@ defmodule ApiWeb.RoomChannel do
         %{topic: "room", room_id: id, user: user}
       )
 
-      send(self(), :after_join)
+      # Pass the room state to after join while the worker is loaded!
+      send(self(), {:after_join, Rooms.get_state(worker)})
       {:ok, socket}
     else
       {:error, _} ->
@@ -32,7 +33,7 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
-  def handle_info(:after_join, socket) do
+  def handle_info({:after_join, room_state}, socket) do
     room_id = socket.assigns.room_id
     log("You have entered #{@name} with id #{room_id}")
 
@@ -43,6 +44,10 @@ defmodule ApiWeb.RoomChannel do
       })
 
     push(socket, "presence_state", Presence.list(socket))
+
+    broadcast!(
+      socket, "room_updated", %{room_state: room_state}
+    )
 
     {:noreply, socket}
   end

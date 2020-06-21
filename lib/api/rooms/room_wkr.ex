@@ -6,6 +6,9 @@ defmodule Api.Rooms.RoomWkr do
   use GenServer
   require Logger
 
+  # time of inactivity before the worker stop
+  @timeout 5 * 60 * 60 * 1_000
+
   alias Registry.Rooms, as: RegRooms
   alias Api.Rooms.Room
   alias Api.Rooms.RoomMonitor
@@ -51,28 +54,31 @@ defmodule Api.Rooms.RoomWkr do
   @impl GenServer
   def init(record) do
     Logger.info("#{__MODULE__} is starting with args #{inspect(record)}")
+    {:ok, record, {:continue, :setup}}
+  end
 
+  @impl GenServer
+  def handle_continue(:setup, state) do
     RoomMonitor.monitor_room(
       self(),
-      %{topic: "room", room_state: record}
+      %{topic: "room", room_state: state}
     )
-
-    {:ok, record}
+    {:noreply, state, @timeout}
   end
 
   @impl GenServer
   def handle_call(:get_state, _from, state) do
-    {:reply, state, state}
+    {:reply, state, state, @timeout}
   end
 
   @impl GenServer
   def handle_call({:join, user}, _from, state) do
     case Room.join(state, user) do
       {:ok, new_state} ->
-        {:reply, {:ok, new_state}, new_state}
+        {:reply, {:ok, new_state}, new_state, @timeout}
 
       {:error, _state} ->
-        {:reply, {:error, "Join room failure #{inspect(state)}"}, state}
+        {:reply, {:error, "Join room failure #{inspect(state)}"}, state, @timeout}
     end
   end
 
@@ -83,15 +89,21 @@ defmodule Api.Rooms.RoomWkr do
         {:stop, :normal, new_state, new_state}
 
       {:ok, new_state} ->
-        {:reply, {:ok, new_state}, new_state}
+        {:reply, {:ok, new_state}, new_state, @timeout}
 
       {:error, _state} ->
-        {:reply, {:error, "Leave room failure #{inspect(state)}"}, state}
+        {:reply, {:error, "Leave room failure #{inspect(state)}"}, state, @timeout}
     end
   end
 
   @impl GenServer
   def handle_cast(:stop, state), do: {:stop, :normal, state}
+
+  @impl GenServer
+  def handle_info(:timeout, state) do
+    Logger.info("#{__MODULE__} timeout")
+    {:stop, {:shutdown, :timeout}, state}
+  end
 
   @impl GenServer
   def terminate(reason, _state) do
