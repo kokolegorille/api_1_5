@@ -27,9 +27,23 @@ defmodule Api.Rooms.Room do
     struct(__MODULE__, attrs)
   end
 
+  # def join(%__MODULE__{members: members, presences: presences} = room, user) do
+  #   if Enum.member?(members, user) && not Enum.member?(presences, user) do
+  #     new_presences = [user | presences]
+  #     status = if length(new_presences) >= length(members),
+  #       do: :running, else: :idle
+  #     {:ok, %{room | presences: new_presences, status: status}}
+  #   else
+  #     {:error, room}
+  #   end
+  # end
+
   def join(%__MODULE__{members: members, presences: presences} = room, user) do
-    if Enum.member?(members, user) && not Enum.member?(presences, user) do
-      new_presences = [user | presences]
+    if Enum.member?(members, user) do
+      new_presences = if Enum.member?(presences, user),
+        do: presences,
+        else: [user | presences]
+
       status = if length(new_presences) >= length(members),
         do: :running, else: :idle
       {:ok, %{room | presences: new_presences, status: status}}
