@@ -56,3 +56,41 @@ Add files:
 /lib/api_web/channels/room_channel.ex
 /lib/api_web/channels/system_channel.ex
 /lib/api_web/channels/user_channel.ex
+
+
+## Manual start of Babylon worker
+
+iex> w = Babylon.new %{id: "1", members: [%{id: 1, name: "admin"}]}
+iex> Babylon.start_worker w
+
+to check...
+
+iex> Babylon.list_worlds                                           
+[
+  %Api.Babylon.World{
+    access: :public,
+    description: nil,
+    id: "1",
+    inserted_at: nil,
+    members: [%{id: 1, name: "admin"}],
+    name: nil,
+    owner: nil,
+    players: %{
+      1 => %Api.Babylon.Player{
+        animation: "Idle",
+        colour: "#FEBCD3",
+        id: 1,
+        model: "torus",
+        rx: 0,
+        ry: 0,
+        rz: 0,
+        status: :loading,
+        x: 122,
+        y: 5,
+        z: 226
+      }
+    },
+    presences: [%{id: 1, name: "admin"}],
+    status: :running
+  }
+]

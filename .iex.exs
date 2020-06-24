@@ -4,5 +4,6 @@ alias Api.{
   Accounts,
   Requests,
   Rooms,
+  Babylon,
   Repo
 }

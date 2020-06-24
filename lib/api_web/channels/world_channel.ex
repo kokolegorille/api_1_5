@@ -1,4 +1,4 @@
-defmodule ApiWeb.RoomChannel do
+defmodule ApiWeb.WorldChannel do
   @moduledoc false
 
   use ApiWeb, :channel
@@ -7,22 +7,22 @@ defmodule ApiWeb.RoomChannel do
 
   alias ApiWeb.Presence
   alias ApiWeb.ChannelMonitor
-  alias Api.Rooms
+  alias Api.Babylon
 
-  def join("room:" <> id, _params, socket) do
+  def join("world:" <> id, _params, socket) do
     user = socket.assigns.user
 
-    with worker when is_pid(worker) <- Rooms.whereis_name(id),
-         {:ok, _} <- Rooms.join(worker, user) do
-      socket = assign(socket, :room_id, id)
+    with worker when is_pid(worker) <- Babylon.whereis_name(id),
+         {:ok, _} <- Babylon.join(worker, user) do
+      socket = assign(socket, :world_id, id)
 
       ChannelMonitor.monitor_channel(
         self(),
-        %{topic: "room", id: id, user: user}
+        %{topic: "world", id: id, user: user}
       )
 
       # Pass the room state to after join while the worker is loaded!
-      send(self(), {:after_join, Rooms.get_state(worker)})
+      send(self(), {:after_join, Babylon.get_state(worker)})
       {:ok, socket}
     else
       {:error, _} ->
@@ -33,9 +33,9 @@ defmodule ApiWeb.RoomChannel do
     end
   end
 
-  def handle_info({:after_join, room_state}, socket) do
-    room_id = socket.assigns.room_id
-    log("You have entered #{@name} with id #{room_id}")
+  def handle_info({:after_join, world_state}, socket) do
+    world_id = socket.assigns.world_id
+    log("You have entered #{@name} with id #{world_id}")
 
     {:ok, _} =
       Presence.track(socket, socket.assigns.user.id, %{
@@ -47,8 +47,8 @@ defmodule ApiWeb.RoomChannel do
 
     broadcast!(
       socket,
-      "room_updated",
-      %{room_state: room_state}
+      "world_updated",
+      %{world_state: world_state}
     )
 
     {:noreply, socket}

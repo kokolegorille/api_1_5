@@ -20,20 +20,20 @@ defmodule Api.Application do
 
       ApiWeb.Presence,
 
-      # Rooms registry
+      # Registries
       {Registry, keys: :unique, name: Registry.Rooms},
+      {Registry, keys: :unique, name: Registry.Babylon},
 
-      # Dynamic supervisor
+      # Dynamic supervisors
       Api.Rooms.RoomSup,
+      Api.Babylon.BabylonSup,
 
       # Request server
       Api.Requests.RequestSrv,
 
-      # Channel monitor
+      # Monitors
       ApiWeb.ChannelMonitor,
-
-      # Room monitor
-      Api.Rooms.RoomMonitor
+      Api.WorkerMonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

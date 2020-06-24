@@ -6,7 +6,7 @@ defmodule ApiWeb.LobbyChannel do
   @name __MODULE__
 
   alias ApiWeb.Presence
-  alias Api.{Requests, Rooms}
+  alias Api.{Requests, Rooms, Babylon}
   alias ApiWeb.ChannelMonitor
 
   def join("lobby", _params, socket) do
@@ -30,6 +30,7 @@ defmodule ApiWeb.LobbyChannel do
     push(socket, "presence_state", Presence.list(socket))
     push(socket, "list_requests", %{requests: Requests.list_requests()})
     push(socket, "list_rooms", %{rooms: Rooms.list_rooms()})
+    push(socket, "list_worlds", %{worlds: Babylon.list_worlds()})
 
     {:noreply, socket}
   end
@@ -79,10 +80,12 @@ defmodule ApiWeb.LobbyChannel do
         # Create initial room structure for worker
         room =
           Rooms.new(%{
+            id: UUID.uuid4(),
             name: name,
             description: description,
             owner: owner,
-            members: [owner, user]
+            members: [owner, user],
+            inserted_at: DateTime.utc_now()
           })
 
         {:ok, _pid} = Rooms.start_worker(room)
@@ -100,6 +103,29 @@ defmodule ApiWeb.LobbyChannel do
 
         broadcast!(socket, "room_created", %{room: room})
     end
+
+    {:noreply, socket}
+  end
+
+  def handle_in(
+        "create_world",
+        %{"name" => name, "description" => description} = _params,
+        socket
+      ) do
+    user = socket.assigns.user
+
+    world =
+      Babylon.new(%{
+        id: UUID.uuid4(),
+        name: name,
+        description: description,
+        owner: user,
+        inserted_at: DateTime.utc_now()
+      })
+
+    {:ok, _pid} = Babylon.start_worker(world)
+
+    broadcast!(socket, "world_created", %{world: world})
 
     {:noreply, socket}
   end

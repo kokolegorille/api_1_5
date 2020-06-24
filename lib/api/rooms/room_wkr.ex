@@ -11,7 +11,7 @@ defmodule Api.Rooms.RoomWkr do
 
   alias Registry.Rooms, as: RegRooms
   alias Api.Rooms.Room
-  alias Api.Rooms.RoomMonitor
+  alias Api.WorkerMonitor
 
   def child_spec(args) do
     %{
@@ -59,10 +59,11 @@ defmodule Api.Rooms.RoomWkr do
 
   @impl GenServer
   def handle_continue(:setup, state) do
-    RoomMonitor.monitor_room(
+    WorkerMonitor.monitor(
       self(),
-      %{topic: "room", room_state: state}
+      %{topic: "room", worker_state: state}
     )
+
     {:noreply, state, @timeout}
   end
 

@@ -15,7 +15,10 @@ defmodule ApiWeb.UserChannel do
 
   def handle_in("ping", %{"target" => target}, socket) do
     notify_user_by_id(
-      socket, target, "ping_received", %{
+      socket,
+      target,
+      "ping_received",
+      %{
         from: socket.assigns.user,
         at: :os.system_time(:millisecond)
       }
@@ -46,5 +49,4 @@ defmodule ApiWeb.UserChannel do
   end
 
   defp log(message), do: Logger.debug(fn -> message end)
-
 end
