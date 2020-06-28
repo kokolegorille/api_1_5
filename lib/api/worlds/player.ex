@@ -1,6 +1,6 @@
-defmodule Api.Babylon.Player do
+defmodule Api.Worlds.Player do
   @moduledoc """
-  The Player structure for Babylonjs world
+  The Player structure for 3D world
   """
 
   @derive {Jason.Encoder,

@@ -1,4 +1,4 @@
-defmodule Api.Babylon.BabylonWkr do
+defmodule Api.Worlds.WorldWkr do
   @moduledoc """
   The worker module
   """
@@ -9,8 +9,8 @@ defmodule Api.Babylon.BabylonWkr do
   # time of inactivity before the worker stop
   @timeout 5 * 60 * 60 * 1_000
 
-  alias Registry.Babylon, as: RegBabylon
-  alias Api.Babylon.World
+  alias Registry.Worlds, as: RegWorlds
+  alias Api.Worlds.World
   alias Api.WorkerMonitor
 
   def child_spec(args) do
@@ -57,7 +57,7 @@ defmodule Api.Babylon.BabylonWkr do
   def stop(worker), do: GenServer.cast(worker, :stop)
 
   def whereis_name(name) do
-    case Registry.lookup(RegBabylon, name) do
+    case Registry.lookup(RegWorlds, name) do
       [{pid, _ref}] -> pid
       [] -> nil
     end
@@ -142,5 +142,5 @@ defmodule Api.Babylon.BabylonWkr do
 
   # Private
 
-  defp via(name), do: {:via, Registry, {RegBabylon, name}}
+  defp via(name), do: {:via, Registry, {RegWorlds, name}}
 end

@@ -1,17 +1,17 @@
-defmodule Api.Babylon.BabylonSup do
+defmodule Api.Worlds.WorldSup do
   @moduledoc """
   The dynamic supervisor
   """
 
   use DynamicSupervisor
-  alias Api.Babylon.BabylonWkr
+  alias Api.Worlds.WorldWkr
   @name __MODULE__
 
   def start_link(_args),
     do: DynamicSupervisor.start_link(__MODULE__, nil, name: @name)
 
   def start_worker(args \\ %{id: "fake_id"}) do
-    case DynamicSupervisor.start_child(__MODULE__, {BabylonWkr, [args]}) do
+    case DynamicSupervisor.start_child(__MODULE__, {WorldWkr, [args]}) do
       {:ok, pid} -> {:ok, pid}
       {:error, {:already_started, pid}} -> {:ok, pid}
     end
@@ -21,7 +21,7 @@ defmodule Api.Babylon.BabylonSup do
     @name
     |> DynamicSupervisor.which_children()
     |> Enum.map(&elem(&1, 1))
-    |> Enum.map(&BabylonWkr.get_state(&1))
+    |> Enum.map(&WorldWkr.get_state(&1))
   end
 
   def init(_args) do

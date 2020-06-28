@@ -1,9 +1,9 @@
-defmodule Api.Babylon.World do
+defmodule Api.Worlds.World do
   @moduledoc """
-  The World structure for Babylonjs world
+  The World structure for 3D world
   """
 
-  alias Api.Babylon.{Player, Helpers}
+  alias Api.Worlds.{Player, Helpers}
 
   @max_size 500
   @max_presences 10

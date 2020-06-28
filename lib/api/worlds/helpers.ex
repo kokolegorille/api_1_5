@@ -1,8 +1,8 @@
-defmodule Api.Babylon.Helpers do
+defmodule Api.Worlds.Helpers do
   use Bitwise
 
   @moduledoc """
-  A set of Elixir helpers for managing Babylonjs world
+  A set of Elixir helpers for managing 3D world
   """
 
   @max_size 500

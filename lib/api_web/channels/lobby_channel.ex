@@ -6,7 +6,7 @@ defmodule ApiWeb.LobbyChannel do
   @name __MODULE__
 
   alias ApiWeb.Presence
-  alias Api.{Requests, Rooms, Babylon}
+  alias Api.{Requests, Rooms, Worlds}
   alias ApiWeb.ChannelMonitor
 
   def join("lobby", _params, socket) do
@@ -30,7 +30,7 @@ defmodule ApiWeb.LobbyChannel do
     push(socket, "presence_state", Presence.list(socket))
     push(socket, "list_requests", %{requests: Requests.list_requests()})
     push(socket, "list_rooms", %{rooms: Rooms.list_rooms()})
-    push(socket, "list_worlds", %{worlds: Babylon.list_worlds()})
+    push(socket, "list_worlds", %{worlds: Worlds.list_worlds()})
 
     {:noreply, socket}
   end
@@ -115,7 +115,7 @@ defmodule ApiWeb.LobbyChannel do
     user = socket.assigns.user
 
     world =
-      Babylon.new(%{
+      Worlds.new(%{
         id: UUID.uuid4(),
         name: name,
         description: description,
@@ -123,7 +123,7 @@ defmodule ApiWeb.LobbyChannel do
         inserted_at: DateTime.utc_now()
       })
 
-    {:ok, _pid} = Babylon.start_worker(world)
+    {:ok, _pid} = Worlds.start_worker(world)
 
     broadcast!(socket, "world_created", %{world: world})
 

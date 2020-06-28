@@ -9,7 +9,7 @@ defmodule ApiWeb.ChannelMonitor do
   @name __MODULE__
 
   alias ApiWeb.Notifier
-  alias Api.{Requests, Rooms, Babylon}
+  alias Api.{Requests, Rooms, Worlds}
 
   def start_link(_args), do: GenServer.start_link(__MODULE__, %{}, name: @name)
 
@@ -64,15 +64,15 @@ defmodule ApiWeb.ChannelMonitor do
         end
 
       "world" ->
-        case Babylon.whereis_name(channel_info.id) do
+        case Worlds.whereis_name(channel_info.id) do
           worker when is_pid(worker) ->
-            Babylon.leave(worker, user)
+            Worlds.leave(worker, user)
 
             # The worker might die from the previous call
             # If the user is the last to quit the room
             # => check if it's still alive
             if Process.alive?(worker) do
-              world_state = Babylon.get_state(worker)
+              world_state = Worlds.get_state(worker)
               notify(%{type: :user_left_world, payload: world_state})
             end
 

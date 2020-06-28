@@ -7,13 +7,13 @@ defmodule ApiWeb.WorldChannel do
 
   alias ApiWeb.Presence
   alias ApiWeb.ChannelMonitor
-  alias Api.Babylon
+  alias Api.Worlds
 
   def join("world:" <> id, _params, socket) do
     user = socket.assigns.user
 
-    with worker when is_pid(worker) <- Babylon.whereis_name(id),
-         {:ok, _} <- Babylon.join(worker, user) do
+    with worker when is_pid(worker) <- Worlds.whereis_name(id),
+         {:ok, _} <- Worlds.join(worker, user) do
       socket = assign(socket, :world_id, id)
 
       ChannelMonitor.monitor_channel(
@@ -22,7 +22,7 @@ defmodule ApiWeb.WorldChannel do
       )
 
       # Pass the room state to after join while the worker is loaded!
-      send(self(), {:after_join, Babylon.get_state(worker)})
+      send(self(), {:after_join, Worlds.get_state(worker)})
       {:ok, socket}
     else
       {:error, _} ->

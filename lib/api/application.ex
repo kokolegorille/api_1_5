@@ -22,11 +22,11 @@ defmodule Api.Application do
 
       # Registries
       {Registry, keys: :unique, name: Registry.Rooms},
-      {Registry, keys: :unique, name: Registry.Babylon},
+      {Registry, keys: :unique, name: Registry.Worlds},
 
       # Dynamic supervisors
       Api.Rooms.RoomSup,
-      Api.Babylon.BabylonSup,
+      Api.Worlds.WorldSup,
 
       # Request server
       Api.Requests.RequestSrv,
