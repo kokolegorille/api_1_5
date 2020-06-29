@@ -109,7 +109,7 @@ defmodule ApiWeb.LobbyChannel do
 
   def handle_in(
         "create_world",
-        %{"name" => name, "description" => description} = _params,
+        %{"name" => name, "description" => description, "access" => access} = _params,
         socket
       ) do
     user = socket.assigns.user
@@ -120,6 +120,8 @@ defmodule ApiWeb.LobbyChannel do
         name: name,
         description: description,
         owner: user,
+        members: [user],
+        access: access,
         inserted_at: DateTime.utc_now()
       })
 

@@ -19,14 +19,14 @@ defmodule Api.Worlds.World do
             description: nil,
             players: %{},
             #
-            access: :public,
+            access: "public",
             status: :started,
             inserted_at: nil
 
   def new(attrs), do: struct(__MODULE__, attrs)
 
   def join(
-        %__MODULE__{access: :public, presences: presences, players: players} = world,
+        %__MODULE__{access: "public", presences: presences, players: players} = world,
         player
       ) do
     with {:ok, presences} <- maybe_add_player(presences, player),
