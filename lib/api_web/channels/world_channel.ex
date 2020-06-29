@@ -6,7 +6,7 @@ defmodule ApiWeb.WorldChannel do
   @name __MODULE__
 
   alias ApiWeb.Presence
-  alias ApiWeb.ChannelMonitor
+  alias Api.Monitors.ChannelMonitor
   alias Api.Worlds
 
   def join("world:" <> id, _params, socket) do

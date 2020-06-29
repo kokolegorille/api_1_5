@@ -16,7 +16,7 @@ defmodule Api.Worlds.WorldWkr do
 
   alias Registry.Worlds, as: RegWorlds
   alias Api.Worlds.World
-  alias Api.WorkerMonitor
+  alias Api.Monitors.WorkerMonitor
 
   def child_spec(args) do
     %{

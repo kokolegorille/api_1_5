@@ -7,7 +7,7 @@ defmodule ApiWeb.LobbyChannel do
 
   alias ApiWeb.Presence
   alias Api.{Requests, Rooms, Worlds}
-  alias ApiWeb.ChannelMonitor
+  alias Api.Monitors.ChannelMonitor
 
   def join("lobby", _params, socket) do
     send(self(), :after_join)

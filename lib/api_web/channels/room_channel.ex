@@ -6,7 +6,7 @@ defmodule ApiWeb.RoomChannel do
   @name __MODULE__
 
   alias ApiWeb.Presence
-  alias ApiWeb.ChannelMonitor
+  alias Api.Monitors.ChannelMonitor
   alias Api.Rooms
 
   def join("room:" <> id, _params, socket) do

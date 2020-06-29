@@ -11,7 +11,7 @@ defmodule Api.Rooms.RoomWkr do
 
   alias Registry.Rooms, as: RegRooms
   alias Api.Rooms.Room
-  alias Api.WorkerMonitor
+  alias Api.Monitors.WorkerMonitor
 
   def child_spec(args) do
     %{

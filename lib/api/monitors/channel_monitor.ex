@@ -1,4 +1,4 @@
-defmodule ApiWeb.ChannelMonitor do
+defmodule Api.Monitors.ChannelMonitor do
   @moduledoc """
   The channel monitor detect when a room channel goes down.
   It uses notifier to propagate messages.

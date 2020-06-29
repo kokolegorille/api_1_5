@@ -32,8 +32,8 @@ defmodule Api.Application do
       Api.Requests.RequestSrv,
 
       # Monitors
-      ApiWeb.ChannelMonitor,
-      Api.WorkerMonitor
+      Api.Monitors.ChannelMonitor,
+      Api.Monitors.WorkerMonitor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

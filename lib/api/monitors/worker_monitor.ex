@@ -1,4 +1,4 @@
-defmodule Api.WorkerMonitor do
+defmodule Api.Monitors.WorkerMonitor do
   @moduledoc """
   The room monitor detect when a room worker goes down.
   It uses notifier to propagate messages.
