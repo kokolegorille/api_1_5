@@ -6,8 +6,8 @@ defmodule Api.AccountsTest do
   describe "users" do
     alias Api.Accounts.User
 
-    @valid_attrs %{email: "some email", name: "some name"}
-    @update_attrs %{email: "some updated email", name: "some updated name"}
+    @valid_attrs %{email: "email@example.com", name: "some name", password: "password"}
+    @update_attrs %{email: "someupdatedemail@example.com", name: "some updated name", password: "some updated password"}
     @invalid_attrs %{email: nil, name: nil}
 
     def user_fixture(attrs \\ %{}) do
@@ -21,18 +21,20 @@ defmodule Api.AccountsTest do
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      assert Accounts.list_users() == [user]
+      assert Accounts.list_users() == [rm_password(user)]
     end
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      assert Accounts.get_user!(user.id) == user
+      assert Accounts.get_user!(user.id) == rm_password(user)
+      assert Accounts.authenticate(user.name, user.password)
     end
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.email == "some email"
+      assert user.email == "email@example.com"
       assert user.name == "some name"
+      assert Accounts.authenticate(user.name, user.password)
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -42,14 +44,14 @@ defmodule Api.AccountsTest do
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
-      assert user.email == "some updated email"
+      assert user.email == "someupdatedemail@example.com"
       assert user.name == "some updated name"
     end
 
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-      assert user == Accounts.get_user!(user.id)
+      assert rm_password(user) == Accounts.get_user!(user.id)
     end
 
     test "delete_user/1 deletes the user" do
@@ -62,5 +64,11 @@ defmodule Api.AccountsTest do
       user = user_fixture()
       assert %Ecto.Changeset{} = Accounts.change_user(user)
     end
+
+    test "registration_change_user/1 returns a user changeset" do
+      user = user_fixture()
+      assert %Ecto.Changeset{} = Accounts.registration_change_user(user)
+    end
   end
+
 end

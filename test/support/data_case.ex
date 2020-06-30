@@ -52,4 +52,7 @@ defmodule Api.DataCase do
       end)
     end)
   end
+
+  # Clean up password for Accounts User tests
+  def rm_password(user), do: %{user | password: nil}
 end
