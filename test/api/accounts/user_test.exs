@@ -1,11 +1,39 @@
 defmodule Api.Accounts.UserTest do
   use Api.DataCase
 
+  alias Ecto.Changeset
   alias Api.Accounts
   alias Accounts.User
 
   @valid_attrs %{name: "koko", email: "koko@example.com", password: "password"}
   @invalid_attrs %{}
+
+  # TESTING ELIXIR
+  @schema_fields [:name, :email, :password]
+
+  describe "changeset/1" do
+    test "success: returns a valid changeset when given valid arguments" do
+      changeset = User.registration_changeset(%User{}, @valid_attrs)
+      assert %Changeset{valid?: true, changes: changes} = changeset
+
+      mutated = [:password]
+
+      for field <- @schema_fields, field not in mutated do
+        actual = Map.get(changes, field)
+
+        expected = @valid_attrs[field]
+        # Uncomment if using string keys
+        # expected = params[Atom.to_string(field)]
+
+        assert actual == expected,
+          "Values did not match for field: #{field}\nexpected: #{ inspect(expected)}\nactual: #{inspect(actual)}"
+      end
+
+      # Test password
+      assert Map.get(changes, :password_hash)
+    end
+  end
+  # END TESTING ELIXIR
 
   describe "happy path" do
     test "changeset with valid attributes" do
