@@ -33,22 +33,39 @@ defmodule ApiWeb.SystemChannel do
   end
 
   # For testing
+  # def handle_in("ping", payload, socket) do
+  #   user = socket.assigns.user
+  #   timestamp = :os.system_time(:millisecond)
+  #   push(socket, "pong", %{ping_time: timestamp})
+
+  #   case payload["ping_time"] do
+  #     ping_time when is_number(ping_time) ->
+  #       lag = timestamp - ping_time
+  #       latency = %{user: user, lag: lag, ping_time: ping_time}
+  #       log("> user : #{user.id}, lag : #{latency.lag}")
+
+  #     _ ->
+  #       log("> user : #{user.id}, lag : undefined")
+  #   end
+
+  #   {:noreply, socket}
+  # end
+
   def handle_in("ping", payload, socket) do
     user = socket.assigns.user
     timestamp = :os.system_time(:millisecond)
-    push(socket, "pong", %{ping_time: timestamp})
+    # push(socket, "pong", %{ping_time: timestamp})
 
     case payload["ping_time"] do
       ping_time when is_number(ping_time) ->
         lag = timestamp - ping_time
         latency = %{user: user, lag: lag, ping_time: ping_time}
         log("> user : #{user.id}, lag : #{latency.lag}")
-
+        {:reply, {:ok, %{lag: lag}}, socket}
       _ ->
         log("> user : #{user.id}, lag : undefined")
+        {:reply, {:ok, %{lag: "undefined"}}, socket}
     end
-
-    {:noreply, socket}
   end
 
   def handle_in(command, payload, socket) do
