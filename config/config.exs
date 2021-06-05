@@ -8,7 +8,8 @@
 use Mix.Config
 
 config :api,
-  ecto_repos: [Api.Repo]
+  ecto_repos: [Api.Repo],
+  generators: [binary_id: true]
 
 config :api, Api.Repo, migration_timestamps: [type: :utc_datetime]
 
