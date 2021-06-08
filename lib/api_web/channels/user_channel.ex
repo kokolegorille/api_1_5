@@ -6,7 +6,7 @@ defmodule ApiWeb.UserChannel do
   @name __MODULE__
 
   def join("user:" <> id, _params, socket) do
-    if String.to_integer(id) === socket.assigns.user.id do
+    if id === socket.assigns.user.id do
       {:ok, socket}
     else
       {:error, %{reason: "Not authorized"}}
